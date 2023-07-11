@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-unique-note-calendar",
+	"name": "Unique Note Calendar",
+	"version": "0.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "See your Obsidian unique notes on a calendar",
+	"author": "Andrew Westling",
+	"authorUrl": "https://andrewwestling.com",
+	"fundingUrl": "https://buymeacoffee.com/expandrew",
+	"isDesktopOnly": false
+}
