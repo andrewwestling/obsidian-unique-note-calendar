@@ -1,16 +1,18 @@
 import { Plugin } from "obsidian";
-
-type PluginSettings = {
-	dateFormats: {
-		unique: string;
-	};
-};
+import {
+	DEFAULT_SETTINGS,
+	PluginSettings,
+	UniqueNoteCalendarPluginSettingTab,
+} from "src/settings";
 
 export default class UniqueNoteCalendarPlugin extends Plugin {
 	settings: PluginSettings;
 
 	async onload() {
 		await this.loadSettings();
+		this.addSettingTab(
+			new UniqueNoteCalendarPluginSettingTab(this.app, this)
+		);
 	}
 
 	onunload() {}
@@ -18,7 +20,7 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
-			{ dateFormats: { unique: "YYYYMMDDHHmm" } },
+			DEFAULT_SETTINGS,
 			await this.loadData()
 		);
 	}
