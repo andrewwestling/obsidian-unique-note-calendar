@@ -5,6 +5,10 @@ import {
 	PluginSettings,
 	UniqueNoteCalendarPluginSettingTab,
 } from "src/settings";
+import {
+	RIGHT_SIDEBAR_LEAF_TYPE,
+	UniqueNoteCalendarPluginSidebarView,
+} from "src/sidebar";
 
 export default class UniqueNoteCalendarPlugin extends Plugin {
 	settings: PluginSettings;
@@ -51,12 +55,41 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "unique-note-calendar--open-in-right-sidebar",
+			name: "Open calendar in right sidebar",
+			callback: async () => {
+				const leafExists = this.app.workspace.getLeavesOfType(
+					RIGHT_SIDEBAR_LEAF_TYPE
+				).length;
+
+				if (!leafExists) {
+					await this.app.workspace.getRightLeaf(false).setViewState({
+						type: RIGHT_SIDEBAR_LEAF_TYPE,
+					});
+				}
+
+				this.app.workspace.revealLeaf(
+					this.app.workspace.getLeavesOfType(
+						RIGHT_SIDEBAR_LEAF_TYPE
+					)[0]
+				);
+			},
+		});
+
 		this.addSettingTab(
 			new UniqueNoteCalendarPluginSettingTab(this.app, this)
 		);
+
+		this.registerView(
+			RIGHT_SIDEBAR_LEAF_TYPE,
+			(leaf) => new UniqueNoteCalendarPluginSidebarView(leaf, this)
+		);
 	}
 
-	onunload() {}
+	onunload() {
+		this.app.workspace.detachLeavesOfType(RIGHT_SIDEBAR_LEAF_TYPE);
+	}
 
 	async loadSettings() {
 		this.settings = Object.assign(
