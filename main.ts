@@ -1,5 +1,5 @@
 import { Notice, Plugin } from "obsidian";
-import { getNotesWithDates, makeFolderTree } from "src/parseNotes";
+import { getNotesWithDates, getFlatFolders } from "src/parseNotes";
 import {
 	DEFAULT_SETTINGS,
 	PluginSettings,
@@ -35,18 +35,18 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		});
 
 		this.addCommand({
-			id: "test-makeFolderTree",
-			name: "Test: Make Folder Tree",
+			id: "test-getFlatFolders",
+			name: "Test: Make FlatFolders",
 			callback: async () => {
-				const folderTree = await getNotesWithDates(
+				const flatFolders = await getNotesWithDates(
 					this.app.vault.getMarkdownFiles(),
 					this.settings.uniquePrefixFormat
-				).then(makeFolderTree);
+				).then(getFlatFolders);
 
-				console.log({ folderTree });
+				console.log({ flatFolders });
 
 				new Notice(
-					"🗂️✅ Made the folder tree. Check the console to see the output."
+					"🗂️✅ Made flatFolders. Check the console to see the output."
 				);
 			},
 		});
