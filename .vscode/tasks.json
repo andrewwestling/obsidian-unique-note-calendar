@@ -1,0 +1,46 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "💥 Bootstrap",
+			"detail": "(Set up this repo from scratch)",
+			"group": "build",
+			"dependsOrder": "sequence",
+			"dependsOn": ["🟣 Install dependencies"],
+			"problemMatcher": []
+		},
+		{
+			"label": "🟣 Install dependencies",
+			"detail": "npm install",
+			"type": "npm",
+			"script": "install",
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🟣 Start development",
+			"detail": "npm run dev",
+			"type": "npm",
+			"script": "dev",
+			"group": "build",
+			"presentation": {
+				"group": "dev"
+			},
+			"problemMatcher": [],
+			"dependsOn": ["🟣 Install dependencies"]
+		},
+		{
+			"label": "💎 Update plugin code in my real vault",
+			"detail": "Put the latest version of the plugin code into my real Obsidian vault for real beta testing",
+			"type": "shell",
+			"command": "npm run build && mkdir -p ~/o-vault-amw/.obsidian/plugins/obsidian-unique-note-calendar && cp ~/Code/obsidian-unique-note-calendar/main.js ~/Code/obsidian-unique-note-calendar/manifest.json ~/Code/obsidian-unique-note-calendar/styles.css ~/Code/obsidian-unique-note-calendar/.hotreload ~/o-vault-amw/.obsidian/plugins/obsidian-unique-note-calendar/",
+			"presentation": {
+				"revealProblems": "onProblem",
+				"focus": false
+			},
+			"problemMatcher": []
+		}
+	]
+}
