@@ -1,11 +1,13 @@
 import UniqueNoteCalendarPlugin from "main";
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, TFile, WorkspaceLeaf } from "obsidian";
 import {
 	FlatFolders,
 	NoteWithDate,
 	getFlatFolders,
 	getNotesWithDates,
 } from "./parseNotes";
+import { Calendar, EventClickArg, EventInput } from "@fullcalendar/core";
+import { getEventTitle, renderCalendar } from "./calendar";
 
 export const RIGHT_SIDEBAR_LEAF_TYPE = "unique-note-calendar-right-sidebar";
 
@@ -17,6 +19,7 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 	optionNames: string[];
 	selectedFolder: string;
 	notesToShow: NoteWithDate[];
+	calendar: Calendar | null = null;
 
 	constructor(leaf: WorkspaceLeaf, plugin: UniqueNoteCalendarPlugin) {
 		super(leaf);
@@ -48,6 +51,9 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 		// Set up data for SelectFolder element
 		this.folderNames =
 			(this.flatFolders && Object.keys(this.flatFolders)) || [];
+
+		// Set up notesToShow
+		this.notesToShow = this.flatFolders[this.selectedFolder];
 	}
 
 	async onOpen() {
@@ -71,6 +77,9 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 			} else {
 				this.notesToShow = this.flatFolders[selectedValue]; // Otherwise, set notesToShow to the corresponding value in flatFolders
 			}
+
+			// Call updateSidebarView when the value changes so the calendar will update
+			updateSidebarView();
 		};
 
 		// Make options for SelectFolder from folderNames
@@ -96,6 +105,60 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 		};
 		makeOptions(); // Call it
 
+		// Create Calendar element
+		const calendarEl = container.createEl("div");
+
+		// Create the FullCalendar EventInput objects from the notes
+		const getEvents = async (
+			specifiedNoteDates?: NoteWithDate[]
+		): Promise<EventInput[]> => {
+			let noteDates = specifiedNoteDates; // Use passed-in noteDates if it exists; if it doesn't, we want to return all notes
+
+			if (!noteDates) {
+				noteDates = this.notesWithDates;
+			}
+
+			return noteDates.map((note) => {
+				return {
+					title: getEventTitle(
+						note,
+						this.plugin.settings.uniquePrefixFormat
+					),
+					start: new Date(note.date),
+					extendedProps: { path: note.path },
+				};
+			});
+		};
+
+		// What to do when clicking a calendar event
+		const eventClick = (clicked: EventClickArg) => {
+			const file = this.app.vault.getAbstractFileByPath(
+				clicked.event.extendedProps.path
+			);
+
+			// Open in a new tab if command+click or control+click
+			const shouldOpenInNewTab =
+				clicked.jsEvent.getModifierState("Control") ||
+				clicked.jsEvent.getModifierState("Meta");
+
+			if (shouldOpenInNewTab) {
+				this.app.workspace.getLeaf("tab").openFile(file as TFile);
+			} else {
+				this.app.workspace.getMostRecentLeaf()?.openFile(file as TFile);
+			}
+		};
+
+		if (this.calendar) {
+			this.calendar.destroy();
+			this.calendar = null;
+		}
+
+		this.calendar = renderCalendar({
+			calendarEl,
+			events: async () => await getEvents(this.notesToShow || null),
+			eventClick,
+		});
+
 		// Handler for events that should update the sidebar data
 		const updateSidebarView = async () => {
 			// First, get fresh data
@@ -112,6 +175,9 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 				this.selectedFolder = ""; // Reset the selectedFolder because the SelectFolder element is gonna regenerate and the value will be out of sync
 				makeOptions(); // Make new options for the SelectFolder component
 			}
+
+			// Regenerate calendar
+			this.calendar?.refetchEvents();
 		};
 
 		// Register update events
