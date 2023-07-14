@@ -30,17 +30,45 @@ export const getNotesWithDates: (
 /**
  * FlatFolders
  *
- * Looks like this:
+ * The keys are strings that represent paths (`keyPath`)
  *
+ * The values are `NoteWithDate[]` and represent all notes in all subfolders of the `keyPath`
+ *
+ * Example:
+ *
+ * For a filesystem like this:
+ *
+ * ```plaintext
+ * 🗂️
+ * ├─ Calls/
+ * │  ├─ 2023XXXXXXXX Call with Joe.md
+ * │  ├─ 2023XXXXXXXX Call with Joe.md
+ * │  ├─ 2023XXXXXXXX Call with Joe.md
+ * ├─ Music/
+ * │  ├─ Concerts/
+ * │  │  ├─ 2023XXXXXXXX Concert - City Symphony (Season Finale).md
+ * │  ├─ Rehearsals/
+ * │  │  ├─ 2023XXXXXXXX Rehearsal - City Symphony (for Season Finale).md
+ * │  │  ├─ 2023XXXXXXXX Rehearsal - City Symphony (for Season Finale).md
+ * │  ├─ 2023XXXXXXXX Spring Concert Repertoire.md
+ * ├─ Trips/
+ * │  ├─ 2023XXXXXXXX Trip to Portland.md
+ * ├─ Work/
+ * │  ├─ Calls/
+ * │     ├─ 2023XXXXXXXX Call with Sally (Offer call).md
  * ```
+ *
+ * FlatFolders looks like this:
+ *
+ * ```json
  * {
- * 	"Calls/": NoteWithDate[],
- * 	"Music/": NoteWithDate[], // Includes notes in all subfolders of `/Music/...`
- * 	"Music/Rehearsals/": NoteWithDate[], // Includes only notes in `/Music/Rehearsals/...`
- * 	"Music/Concerts/": NoteWithDate[], // Only notes in `/Music/Concerts/...`
- * 	"Trips/": NoteWithDate[],
- * 	"Work/": NoteWithDate[], // All child notes in `/Work/...`
- * 	"Work/Calls/": NoteWithDate[], // Only notes in `/Work/Calls/...`
+ * 	"Calls/": [{}, {}, {}],
+ * 	"Music/": [{}, {}, {}, {}], // Includes notes in `/Music` and in all subfolders of `/Music/../../etc`
+ * 	"Music/Concerts/": [{}], // Includes notes in `/Music/Concerts/` and in all subfolders of `/Music/Concerts/../../etc`
+ * 	"Music/Rehearsals/": [{}, {}], // Includes notes in `/Music/Rehearsals/` and in all subfolders of `/Music/Rehearsals/../../etc`
+ * 	"Trips/": [{}],
+ * 	"Work/": [{}], // `/Work/` and subfolders `/Work/../../etc`
+ * 	"Work/Calls/": [{}], // `/Work/Calls` and subfolders `/Work/Calls/../../etc`
  * }
  * ```
  */
