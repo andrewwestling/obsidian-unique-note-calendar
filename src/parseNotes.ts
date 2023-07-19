@@ -76,30 +76,20 @@ export type FlatFolders = { [flatPath: string]: NoteWithDate[] };
 export const getFlatFolders = (notesWithDates: NoteWithDate[]) => {
 	const flatFolders: FlatFolders = {};
 
-	for (const note of notesWithDates) {
+	notesWithDates.forEach((note) => {
 		const pathParts = note.path.split("/");
-		let currentPath = "";
+		const foldersToCreate = pathParts.slice(0, -1); // Exclude the last path part (filename)
 
-		/**
-		 * Important:
-		 *
-		 * This loop needs to go up until  `i < pathParts.length - 1` because the last pathPart is the filename itself
-		 * and we don't want to create folders for the filenames
-		 *
-		 * ex. If pathParts comes in like `["Work", "Calls", "Archived", "202307132342 Call with Joe.md"]`,
-		 * it needs to only process `["Work", "Calls", "Archived"]` because the last pathPart is the filename
-		 */
-		for (let i = 0; i < pathParts.length - 1; i++) {
-			currentPath += pathParts[i] + "/";
-
-			// Create the folder if it isn't found
-			if (!flatFolders[currentPath]) {
-				flatFolders[currentPath] = [];
-			}
-
-			flatFolders[currentPath].push(note);
-		}
-	}
+		foldersToCreate.reduce(
+			(subPath, folder) => {
+				const fullPath = subPath + folder + "/";
+				flatFolders[fullPath] = flatFolders[fullPath] || [];
+				flatFolders[fullPath].push(note);
+				return fullPath;
+			},
+			"" // Start from top of the tree
+		);
+	});
 
 	return flatFolders;
 };
