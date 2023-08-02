@@ -1,5 +1,8 @@
 import * as React from "react";
+import { usePluginContext } from "./PluginContext";
 
 export const SidebarView = () => {
-	return <h4>Hello, React!</h4>;
+	const { app } = usePluginContext();
+
+	return <h4>Hello, {app?.vault.getName()}!</h4>;
 };
