@@ -1,5 +1,7 @@
-import UniqueNoteCalendarPlugin from "main";
+import * as React from "react";
+import { Root, createRoot } from "react-dom/client";
 import { ItemView, TFile, WorkspaceLeaf } from "obsidian";
+import UniqueNoteCalendarPlugin from "main";
 import {
 	FlatFolders,
 	NoteWithDate,
@@ -8,11 +10,14 @@ import {
 } from "./parseNotes";
 import { Calendar, EventClickArg, EventInput } from "@fullcalendar/core";
 import { getEventTitle, renderCalendar } from "./calendar";
+import { SidebarView } from "./components/SidebarView";
+import { PluginContext } from "./components/PluginContext";
 
 export const RIGHT_SIDEBAR_LEAF_TYPE = "unique-note-calendar-right-sidebar";
 
 export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 	plugin: UniqueNoteCalendarPlugin;
+	reactRoot: Root;
 	notesWithDates: NoteWithDate[];
 	flatFolders: FlatFolders;
 	folderNames: string[];
@@ -56,10 +61,24 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 		this.notesToShow = this.flatFolders[this.selectedFolder];
 	}
 
+	async onClose() {
+		this.reactRoot.unmount();
+	}
+
 	async onOpen() {
 		// Set up elements
 		const container = this.containerEl.children[1];
 		container.empty();
+
+		this.reactRoot = createRoot(this.containerEl.children[1]);
+		this.reactRoot.render(
+			<React.StrictMode>
+				<PluginContext.Provider value={{ app: this.app }}>
+					<SidebarView />
+				</PluginContext.Provider>
+			</React.StrictMode>
+		);
+
 		const topEl = container.createEl("div");
 
 		// Get initial data
