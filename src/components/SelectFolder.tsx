@@ -9,7 +9,7 @@ export const SelectFolder = ({
 }) => {
 	return (
 		<select
-			style={{ width: "100%" }}
+			className="w-full"
 			onChange={(event: ChangeEvent) =>
 				onSelectFolderChange((event.target as HTMLSelectElement).value)
 			}

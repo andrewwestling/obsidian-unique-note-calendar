@@ -17,3 +17,7 @@ data.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Tailwind (this should be generated on build instead of committed)
+main.css
+styles.css

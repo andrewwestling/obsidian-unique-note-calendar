@@ -5,7 +5,9 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
+		"dev:css": "tailwindcss build -i tailwind.css -o styles.css --watch",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"build:css": "tailwindcss build -i tailwind.css -o styles.css",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
@@ -26,9 +28,12 @@
 	"dependencies": {
 		"@fullcalendar/core": "^6.1.8",
 		"@fullcalendar/list": "^6.1.8",
-		"moment": "^2.29.4",
 		"@ladle/react": "^2.16.1",
+		"autoprefixer": "^10.4.14",
+		"moment": "^2.29.4",
+		"postcss": "^8.4.27",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"tailwindcss": "^3.3.3"
 	}
 }

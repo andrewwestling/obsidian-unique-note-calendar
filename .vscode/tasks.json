@@ -44,6 +44,18 @@
 			"dependsOn": ["🟣 Install dependencies"]
 		},
 		{
+			"label": "🟣 Start Tailwind",
+			"detail": "npm run dev:css",
+			"type": "npm",
+			"script": "dev:css",
+			"group": "build",
+			"presentation": {
+				"group": "dev"
+			},
+			"problemMatcher": [],
+			"dependsOn": ["🟣 Install dependencies"]
+		},
+		{
 			"label": "💎 Update plugin code in my real vault",
 			"detail": "Put the latest version of the plugin code into my real Obsidian vault for real beta testing",
 			"type": "shell",

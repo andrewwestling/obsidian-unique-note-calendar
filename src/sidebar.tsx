@@ -4,6 +4,7 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import UniqueNoteCalendarPlugin from "main";
 import { SidebarView } from "./components/SidebarView";
 import { PluginContext } from "./components/PluginContext";
+import "../tailwind.css";
 
 export const RIGHT_SIDEBAR_LEAF_TYPE = "unique-note-calendar-right-sidebar";
 

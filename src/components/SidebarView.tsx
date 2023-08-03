@@ -94,7 +94,9 @@ export const SidebarView = ({ app }: { app: App }) => {
 	return (
 		<>
 			{/* For debug/development */}
-			<button onClick={getSidebarData}>getSidebarData()</button>
+			<button className="w-full mb-3 p-6" onClick={getSidebarData}>
+				🪩 getSidebarData()
+			</button>
 			<br />
 
 			{/* SelectFolder dropdown */}
