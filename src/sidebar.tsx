@@ -36,10 +36,8 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 		this.reactRoot = createRoot(this.containerEl.children[1]);
 		this.reactRoot.render(
 			<React.StrictMode>
-				<PluginContext.Provider
-					value={{ app: this.app, plugin: this.plugin }}
-				>
-					<SidebarView />
+				<PluginContext.Provider value={{ plugin: this.plugin }}>
+					<SidebarView app={this.app} />
 				</PluginContext.Provider>
 			</React.StrictMode>
 		);

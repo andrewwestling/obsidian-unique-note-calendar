@@ -7,9 +7,10 @@ import {
 } from "src/parseNotes";
 import { SelectFolder } from "./SelectFolder";
 import { Agenda } from "./Agenda";
+import { App, TFile } from "obsidian";
 
-export const SidebarView = () => {
-	const { app, plugin } = usePluginContext();
+export const SidebarView = ({ app }: { app: App }) => {
+	const { plugin } = usePluginContext();
 
 	// State 😓
 	const [notesWithDates, setNotesWithDates] = useState<NoteWithDate[]>([]);
