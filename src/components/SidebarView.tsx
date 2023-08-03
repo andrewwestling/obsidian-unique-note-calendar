@@ -73,6 +73,23 @@ export const SidebarView = () => {
 	plugin.registerEvent(app.vault.on("rename", getSidebarData));
 	plugin.registerEvent(app.vault.on("delete", getSidebarData));
 
+	// What to do when clicking a note
+	const onNoteClick = (
+		note: NoteWithDate,
+		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+	) => {
+		const file = app.vault.getAbstractFileByPath(note.path);
+
+		// Open in a new tab if command+click or control+click
+		const shouldOpenInNewTab = event?.ctrlKey || event?.metaKey;
+
+		if (shouldOpenInNewTab) {
+			app.workspace.getLeaf("tab").openFile(file as TFile);
+		} else {
+			app.workspace.getMostRecentLeaf()?.openFile(file as TFile);
+		}
+	};
+
 	return (
 		<>
 			{/* For debug/development */}
@@ -86,7 +103,7 @@ export const SidebarView = () => {
 			/>
 
 			{/* List of Notes */}
-			<Agenda notesToShow={notesToShow} />
+			<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
 		</>
 	);
 };
