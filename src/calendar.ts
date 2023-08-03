@@ -1,6 +1,6 @@
 import { Calendar, EventClickArg, EventSourceInput } from "@fullcalendar/core";
 import listPlugin from "@fullcalendar/list";
-import { moment } from "obsidian";
+import moment from "moment";
 import { NoteWithDate } from "./parseNotes";
 import { PluginSettings } from "./settings";
 
