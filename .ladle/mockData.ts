@@ -87,3 +87,13 @@ export const MOCK_NOTES_TO_SHOW: NoteWithDate[] = [
 		date: "2023-07-13T16:41:00.000Z",
 	},
 ];
+
+export const MOCK_FOLDER_NAMES = [
+	"Calls/",
+	"Music/",
+	"Music/Concerts/",
+	"Music/Rehearsals/",
+	"Trips/",
+	"Work/",
+	"Work/Calls/",
+];
