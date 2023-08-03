@@ -20,7 +20,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "🟣 Start development",
+			"label": "🟣 Start plugin",
 			"detail": "npm run dev",
 			"type": "npm",
 			"script": "dev",
@@ -54,6 +54,20 @@
 			},
 			"problemMatcher": [],
 			"dependsOn": ["🟣 Install dependencies"]
+		},
+		{
+			"label": "🚀 Start All",
+			"detail": "Run all the things",
+			"group": "build",
+			"presentation": {
+				"group": "dev"
+			},
+			"problemMatcher": [],
+			"dependsOn": [
+				"🟣 Start plugin",
+				"🟣 Start Tailwind",
+				"🟣 Start Ladle"
+			]
 		},
 		{
 			"label": "💎 Update plugin code in my real vault",
