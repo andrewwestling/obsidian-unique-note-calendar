@@ -13,6 +13,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 	const { plugin } = usePluginContext();
 
 	// State 😓
+	const [isLoading, setIsLoading] = useState(true);
 	const [notesWithDates, setNotesWithDates] = useState<NoteWithDate[]>([]);
 	const [selectedFolder, setSelectedFolder] = useState<string>("");
 	const [folderNames, setFolderNames] = useState<string[]>([]);
@@ -60,6 +61,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 	useEffect(() => {
 		const getData = async () => {
 			const { notesToShow } = await getSidebarData();
+			setIsLoading(false); // Will become `false` when the await finishes
 
 			console.log("🪩 in useEffect getData()", {
 				notesToShow,
@@ -67,7 +69,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 		};
 
 		getData();
-	}, [selectedFolder]);
+	}, [isLoading, selectedFolder]);
 
 	// Register update events
 	plugin.registerEvent(app.vault.on("create", getSidebarData));
