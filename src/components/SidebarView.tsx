@@ -21,6 +21,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 	// Handler for getting sidebar data
 	const getSidebarData = async () => {
+		console.log("🔄 getSidebarData()");
 		// Get notesWithDates
 		const newNotesWithDates = await getNotesWithDates(
 			app.vault.getMarkdownFiles(),
@@ -95,22 +96,26 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 	return (
 		<div className="use-tailwind">
-			<div className="sticky top-0">
-				{/* For debug/development */}
-				<button className="w-full mb-3 p-6" onClick={getSidebarData}>
-					🪩 getSidebarData()
+			{/* Top row (sticky): Reload button, SelectFolder */}
+			<div className="sticky top-0 flex flex-row gap-3">
+				{/* Reload button for debug/development */}
+				<button className="flex-0" onClick={getSidebarData}>
+					🔄
 				</button>
-				<br />
 
-				{/* SelectFolder dropdown */}
-				<SelectFolder
-					onSelectFolderChange={setSelectedFolder}
-					folderNames={folderNames}
-				/>
+				<div className="flex-1">
+					{/* SelectFolder dropdown */}
+					<SelectFolder
+						onSelectFolderChange={setSelectedFolder}
+						folderNames={folderNames}
+					/>
+				</div>
 			</div>
 
-			{/* List of Notes */}
-			<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
+			{/* Agenda: Days and Events */}
+			<div className="my-3">
+				<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
+			</div>
 		</div>
 	);
 };
