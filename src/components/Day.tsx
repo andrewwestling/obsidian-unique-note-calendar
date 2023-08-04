@@ -9,15 +9,15 @@ export const Day = ({
 	children?: ReactNode;
 }) => {
 	return (
-		<div className="flex flex-row gap-2 border-b border-l-0 border-r-0 border-t-0 border-solid">
+		<div className="flex flex-row gap-2 border-b border-l-0 border-r-0 border-t-0 border-solid py-3">
 			{/* Date */}
-			<div className="flex flex-0 basis-24 flex-col p-4">
+			<div className="flex flex-0 basis-16 flex-col px-4">
 				{/* Day of month */}
 				<label className="font-bold text-xl">
 					{moment(date).format("DD")}
 				</label>
 				{/* Day of week */}
-				<label className="text-xs">{moment(date).format("dddd")}</label>
+				<label className="text-xs">{moment(date).format("ddd")}</label>
 			</div>
 
 			{/* Events or empty state */}

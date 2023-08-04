@@ -18,7 +18,7 @@ export const Event = ({
 
 	return (
 		<div
-			className="p-2 border border-solid border-l-4 rounded-md flex flex-row gap-3"
+			className="p-2 border border-solid border-l-8 rounded-md flex flex-row gap-3"
 			key={note.path}
 		>
 			{/* Note title and link */}
