@@ -95,17 +95,19 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 	return (
 		<div className="use-tailwind">
-			{/* For debug/development */}
-			<button className="w-full mb-3 p-6" onClick={getSidebarData}>
-				🪩 getSidebarData()
-			</button>
-			<br />
+			<div className="sticky top-0">
+				{/* For debug/development */}
+				<button className="w-full mb-3 p-6" onClick={getSidebarData}>
+					🪩 getSidebarData()
+				</button>
+				<br />
 
-			{/* SelectFolder dropdown */}
-			<SelectFolder
-				onSelectFolderChange={setSelectedFolder}
-				folderNames={folderNames}
-			/>
+				{/* SelectFolder dropdown */}
+				<SelectFolder
+					onSelectFolderChange={setSelectedFolder}
+					folderNames={folderNames}
+				/>
+			</div>
 
 			{/* List of Notes */}
 			<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
