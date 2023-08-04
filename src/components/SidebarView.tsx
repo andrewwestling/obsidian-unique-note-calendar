@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { usePluginContext } from "./PluginContext";
-import {
-	NoteWithDate,
-	getFlatFolders,
-	getNotesWithDates,
-} from "src/parseNotes";
+import { NoteWithDate, getFlatFolders, getNotesWithDates } from "../parseNotes";
 import { SelectFolder } from "./SelectFolder";
 import { Agenda } from "./Agenda";
 import { App, TFile } from "obsidian";

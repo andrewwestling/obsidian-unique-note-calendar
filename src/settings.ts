@@ -1,4 +1,4 @@
-import UniqueNoteCalendarPlugin from "main";
+import UniqueNoteCalendarPlugin from "../main";
 import { PluginSettingTab, App, Setting } from "obsidian";
 
 export type PluginSettings = {

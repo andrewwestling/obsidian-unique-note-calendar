@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
-import { MOCK_NOTES_TO_SHOW } from ".ladle/mockData";
+import { MOCK_NOTES_TO_SHOW } from "../../.ladle/mockData";
 
 export const Empty = () => {
 	return <Day date={moment("2023-07-14")}></Day>;

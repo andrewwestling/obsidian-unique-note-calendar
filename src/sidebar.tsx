@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Root, createRoot } from "react-dom/client";
 import { ItemView, WorkspaceLeaf } from "obsidian";
-import UniqueNoteCalendarPlugin from "main";
+import UniqueNoteCalendarPlugin from "../main";
 import { SidebarView } from "./components/SidebarView";
 import { PluginContext } from "./components/PluginContext";
 import "../tailwind.css";

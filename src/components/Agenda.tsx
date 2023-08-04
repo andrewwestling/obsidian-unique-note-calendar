@@ -1,5 +1,5 @@
 import React from "react";
-import { NoteWithDate } from "src/parseNotes";
+import { NoteWithDate } from "../parseNotes";
 import moment from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
@@ -55,7 +55,7 @@ export const Agenda = ({
 	);
 
 	return (
-		<div className="flex flex-col gap-1">
+		<div className="flex flex-col">
 			{days.map((day) => (
 				<Day date={moment(day.date)}>
 					{/* This is ugly but it's fine I guess; need to return null if no notes so the empty state will render */}
