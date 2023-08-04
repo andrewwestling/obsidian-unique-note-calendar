@@ -94,7 +94,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 	};
 
 	return (
-		<>
+		<div className="use-tailwind">
 			{/* For debug/development */}
 			<button className="w-full mb-3 p-6" onClick={getSidebarData}>
 				🪩 getSidebarData()
@@ -109,6 +109,6 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 			{/* List of Notes */}
 			<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
-		</>
+		</div>
 	);
 };

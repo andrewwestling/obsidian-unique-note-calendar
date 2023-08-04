@@ -6,6 +6,6 @@ import "../tailwind.css";
 
 export const Provider: GlobalProvider = ({ children }) => (
 	<PluginContext.Provider value={{ plugin }}>
-		{children}
+		<div className="use-tailwind">{children}</div>
 	</PluginContext.Provider>
 );
