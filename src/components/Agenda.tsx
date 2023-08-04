@@ -29,12 +29,23 @@ export const Agenda = ({
 	});
 
 	// Get the earliest and latest dates
-	const startDate = moment.min(
+	let startDate = moment.min(
 		Object.keys(notesByDate).map((date) => moment(date))
 	);
-	const endDate = moment.max(
+	let endDate = moment.max(
 		Object.keys(notesByDate).map((date) => moment(date))
 	);
+
+	// ! This is because my date parser screws up with things that look like dates but aren't (like "0000" or "Porsche Boxster 986" or "Saab 900")
+	if (startDate.isBefore(moment("2010-01-01"))) {
+		console.log("🌴 We had to reassign startDate!");
+		startDate = moment("2010-01-01");
+	}
+
+	if (endDate.isAfter(moment("2030-01-01"))) {
+		console.log("🌴 We had to reassign endDate!");
+		endDate = moment("2030-01-01");
+	}
 
 	// Generate an array of dates between the earliest and latest dates
 	const dateKeys = Array.from(
