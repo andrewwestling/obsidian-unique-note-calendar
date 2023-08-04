@@ -57,11 +57,12 @@ export const Agenda = ({
 	return (
 		<div className="flex flex-col">
 			{days.map((day) => (
-				<Day date={moment(day.date)}>
+				<Day key={day.date} date={moment(day.date)}>
 					{/* This is ugly but it's fine I guess; need to return null if no notes so the empty state will render */}
 					{day.notes.length > 0
 						? day.notes.map((note) => (
 								<Event
+									key={note.path}
 									note={note}
 									onNoteClick={onNoteClick}
 								></Event>
