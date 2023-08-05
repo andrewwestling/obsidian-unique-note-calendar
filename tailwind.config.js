@@ -6,7 +6,7 @@ module.exports = {
 		extend: {
 			height: {
 				/**
-				 * `h-screen-minus-header`
+				 * `screen-minus-header`
 				 *
 				 * This is for determining the height of the sidebar content container
 				 *

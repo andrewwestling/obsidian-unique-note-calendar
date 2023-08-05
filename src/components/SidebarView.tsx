@@ -95,7 +95,10 @@ export const SidebarView = ({ app }: { app: App }) => {
 			{/* Top row: Reload button, SelectFolder */}
 			<div className="flex flex-row gap-3 flex-0">
 				{/* Reload button for debug/development */}
-				<button className="flex-0" onClick={getSidebarData}>
+				<button
+					className="flex-0 basis-8 border border-solid rounded-md"
+					onClick={getSidebarData}
+				>
 					🔄
 				</button>
 
