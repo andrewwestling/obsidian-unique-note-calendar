@@ -9,7 +9,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 	const { plugin } = usePluginContext();
 
 	// State 😓
-	const [isLoading, setIsLoading] = useState(true);
+	const [loaded, setLoaded] = useState(false);
 	const [notesWithDates, setNotesWithDates] = useState<NoteWithDate[]>([]);
 	const [selectedFolder, setSelectedFolder] = useState<string>("");
 	const [folderNames, setFolderNames] = useState<string[]>([]);
@@ -54,21 +54,25 @@ export const SidebarView = ({ app }: { app: App }) => {
 		};
 	};
 
-	// Update data when selectedFolder changes
+	// Initial load
 	useEffect(() => {
 		const getData = async () => {
-			const { notesToShow } = await getSidebarData();
-			setIsLoading(false); // Will become `false` when the await finishes
-
-			console.log("🪩 in useEffect getData()", {
-				notesToShow,
-			});
-
-			onTodayClick();
+			await getSidebarData();
+			setLoaded(true); // Will happen when the await finishes
+			goToToday();
 		};
 
 		getData();
-	}, [isLoading, selectedFolder]);
+	}, [loaded]);
+
+	// Update data when selectedFolder changes
+	useEffect(() => {
+		const getData = async () => {
+			await getSidebarData();
+		};
+
+		getData();
+	}, [selectedFolder]);
 
 	// Register update events
 	plugin.registerEvent(app.vault.on("create", getSidebarData));
@@ -94,7 +98,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 	// For "Today" button
 	const todayRef = useRef<null | HTMLDivElement>(null);
-	const onTodayClick = () => {
+	const goToToday = () => {
 		if (todayRef.current) {
 			console.log("📆 Today: Scrolling to today...");
 			todayRef.current.scrollIntoView({ behavior: "auto" });
@@ -118,7 +122,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 				{/* "Today" button */}
 				<button
 					className="flex-0 basis-8 border border-solid rounded-md"
-					onClick={onTodayClick}
+					onClick={goToToday}
 				>
 					Today
 				</button>
