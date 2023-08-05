@@ -12,10 +12,12 @@ import { Event } from "./Event";
 
 export const Agenda = ({
 	todayRef = null,
+	todayClicked,
 	notesToShow = [],
 	onNoteClick = () => {},
 }: {
 	todayRef?: Ref<HTMLDivElement>;
+	todayClicked?: number;
 	notesToShow: NoteWithDate[];
 	onNoteClick: (
 		note: NoteWithDate,
@@ -44,6 +46,13 @@ export const Agenda = ({
 		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
 	};
 
+	const showToday = () => {
+		const newReferenceDate = moment();
+
+		setReferenceDate(newReferenceDate);
+		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+	};
+
 	// Initial load
 	useEffect(() => {
 		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
@@ -55,9 +64,16 @@ export const Agenda = ({
 		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
 	}, [notesToShow]);
 
+	// Update data if user clicks "Today" outside
+	useEffect(() => {
+		console.log("📆 Today: todayClicked changed");
+		showToday();
+	}, [todayClicked]);
+
 	return (
 		<div className="flex flex-col">
 			<button onClick={showPrev}>Previous</button>
+			<button onClick={showToday}>Today</button>
 			{daysToShow.map((day) => (
 				<Day
 					key={day.date}

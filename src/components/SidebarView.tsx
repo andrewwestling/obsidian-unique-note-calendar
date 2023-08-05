@@ -14,6 +14,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 	const [selectedFolder, setSelectedFolder] = useState<string>("");
 	const [folderNames, setFolderNames] = useState<string[]>([]);
 	const [notesToShow, setNotesToShow] = useState<NoteWithDate[]>([]);
+	const [todayClicked, setTodayClicked] = useState<number>(0);
 
 	// Handler for getting sidebar data
 	const getSidebarData = async () => {
@@ -99,6 +100,8 @@ export const SidebarView = ({ app }: { app: App }) => {
 	// For "Today" button
 	const todayRef = useRef<null | HTMLDivElement>(null);
 	const goToToday = () => {
+		setTodayClicked(todayClicked + 1); // Increment the count so the useEffect in Agenda will fire
+
 		if (todayRef.current) {
 			console.log("📆 Today: Scrolling to today...");
 			todayRef.current.scrollIntoView({ behavior: "auto" });
@@ -140,6 +143,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 			<div className="flex-1 overflow-auto">
 				<Agenda
 					todayRef={todayRef}
+					todayClicked={todayClicked}
 					notesToShow={notesToShow}
 					onNoteClick={onNoteClick}
 				/>
