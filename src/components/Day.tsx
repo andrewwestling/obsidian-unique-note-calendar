@@ -13,11 +13,19 @@ export const Day = ({
 			{/* Date */}
 			<div className="flex flex-0 basis-16 flex-col px-4">
 				{/* Day of month */}
-				<label className="font-bold text-xl">
+				<label
+					className="font-bold text-xl"
+					title={moment(date).format("YYYY-MM-DD")}
+				>
 					{moment(date).format("DD")}
 				</label>
 				{/* Day of week */}
-				<label className="text-xs">{moment(date).format("ddd")}</label>
+				<label
+					className="text-xs"
+					title={moment(date).format("YYYY-MM-DD")}
+				>
+					{moment(date).format("ddd")}
+				</label>
 			</div>
 
 			{/* Events or empty state */}
