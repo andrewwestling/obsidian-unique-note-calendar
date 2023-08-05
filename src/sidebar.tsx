@@ -34,7 +34,10 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 	}
 
 	async onOpen() {
-		this.reactRoot = createRoot(this.containerEl.children[1]);
+		const container = this.containerEl.children[1];
+		container.addClass("use-tailwind");
+
+		this.reactRoot = createRoot(container);
 		this.reactRoot.render(
 			<React.StrictMode>
 				<PluginContext.Provider value={{ plugin: this.plugin }}>

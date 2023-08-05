@@ -91,16 +91,16 @@ export const SidebarView = ({ app }: { app: App }) => {
 	};
 
 	return (
-		<div className="use-tailwind">
-			{/* Top row (sticky): Reload button, SelectFolder */}
-			<div className="sticky top-0 flex flex-row gap-3">
+		<div className="flex flex-col gap-3 h-screen-minus-header">
+			{/* Top row: Reload button, SelectFolder */}
+			<div className="flex flex-row gap-3 flex-0">
 				{/* Reload button for debug/development */}
 				<button className="flex-0" onClick={getSidebarData}>
 					🔄
 				</button>
 
+				{/* SelectFolder dropdown */}
 				<div className="flex-1">
-					{/* SelectFolder dropdown */}
 					<SelectFolder
 						onSelectFolderChange={setSelectedFolder}
 						folderNames={folderNames}
@@ -109,7 +109,7 @@ export const SidebarView = ({ app }: { app: App }) => {
 			</div>
 
 			{/* Agenda: Days and Events */}
-			<div className="my-3">
+			<div className="flex-1 overflow-auto">
 				<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
 			</div>
 		</div>
