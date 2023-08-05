@@ -18,6 +18,14 @@ module.exports = {
 					"calc(100vh - var(--header-height) - calc(var(--size-4-4) * 2))",
 			},
 		},
+		colors: {
+			/**
+			 * `accent`
+			 *
+			 * For using Obsidian's default "accent" color
+			 */
+			accent: "var(--text-accent)",
+		},
 	},
 	plugins: [],
 	corePlugins: {
