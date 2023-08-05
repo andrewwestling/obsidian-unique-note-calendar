@@ -1,5 +1,5 @@
 import { TFile } from "obsidian";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { PluginSettings } from "./settings";
 
 export type NoteWithDate = {
@@ -140,7 +140,102 @@ export const getNotesByDay = (notesWithDates: NoteWithDate[]) => {
 };
 
 /**
- * Add 30 days (in either direction)
- * For each day, check if there is a matching key in notesByDay
- * If yes, add the notesByDay[date] to this day's events
+ * DaysToShow
+ *
+ * This is an array of objects representing a "day" on the Agenda
+ *
+ * The `getDaysToShow(notesByDay, referenceDate)` function generates this, where you pass in a `referenceDate` and it generates a `daysToShow` array for 30 days before and after that date
+ *
+ * DaysToShow looks like this:
+ *
+ * ```json
+ * [
+ *   { "date": "2023-07-06", "events": [] },
+ *   { "date": "2023-07-07", "events": [] },
+ *   { "date": "2023-07-08", "events": [] },
+ *   { "date": "2023-07-09", "events": [] },
+ *   { "date": "2023-07-10", "events": [] },
+ *   { "date": "2023-07-11", "events": [] },
+ *   { "date": "2023-07-12", "events": [] },
+ *   { "date": "2023-07-13", "events": [{}] },
+ *   { "date": "2023-07-14", "events": [{},{}] },
+ *   { "date": "2023-07-15", "events": [] },
+ *   { "date": "2023-07-16", "events": [] },
+ *   { "date": "2023-07-17", "events": [] },
+ *   { "date": "2023-07-18", "events": [] },
+ *   { "date": "2023-07-19", "events": [] },
+ *   { "date": "2023-07-20", "events": [] },
+ *   { "date": "2023-07-21", "events": [] },
+ *   { "date": "2023-07-22", "events": [] },
+ *   { "date": "2023-07-23", "events": [] },
+ *   { "date": "2023-07-24", "events": [] },
+ *   { "date": "2023-07-25", "events": [] },
+ *   { "date": "2023-07-26", "events": [] },
+ *   { "date": "2023-07-27", "events": [] },
+ *   { "date": "2023-07-28", "events": [] },
+ *   { "date": "2023-07-29", "events": [] },
+ *   { "date": "2023-07-30", "events": [] },
+ *   { "date": "2023-07-31", "events": [{}] },
+ *   { "date": "2023-08-01", "events": [] },
+ *   { "date": "2023-08-02", "events": [{}] },
+ *   { "date": "2023-08-03", "events": [] },
+ *   { "date": "2023-08-04", "events": [{}] },
+ *   { "date": "2023-08-05", "events": [] },
+ *   { "date": "2023-08-06", "events": [] },
+ *   { "date": "2023-08-07", "events": [] },
+ *   { "date": "2023-08-08", "events": [] },
+ *   { "date": "2023-08-09", "events": [] },
+ *   { "date": "2023-08-10", "events": [] },
+ *   { "date": "2023-08-11", "events": [] },
+ *   { "date": "2023-08-12", "events": [] },
+ *   { "date": "2023-08-13", "events": [] },
+ *   { "date": "2023-08-14", "events": [] },
+ *   { "date": "2023-08-15", "events": [] },
+ *   { "date": "2023-08-16", "events": [] },
+ *   { "date": "2023-08-17", "events": [] },
+ *   { "date": "2023-08-18", "events": [] },
+ *   { "date": "2023-08-19", "events": [] },
+ *   { "date": "2023-08-20", "events": [] },
+ *   { "date": "2023-08-21", "events": [] },
+ *   { "date": "2023-08-22", "events": [] },
+ *   { "date": "2023-08-23", "events": [] },
+ *   { "date": "2023-08-24", "events": [] },
+ *   { "date": "2023-08-25", "events": [] },
+ *   { "date": "2023-08-26", "events": [] },
+ *   { "date": "2023-08-27", "events": [] },
+ *   { "date": "2023-08-28", "events": [] },
+ *   { "date": "2023-08-29", "events": [] },
+ *   { "date": "2023-08-30", "events": [] },
+ *   { "date": "2023-08-31", "events": [] },
+ *   { "date": "2023-09-01", "events": [{}] },
+ *   { "date": "2023-09-02", "events": [] },
+ *   { "date": "2023-09-03", "events": [] },
+ *   { "date": "2023-09-04", "events": [] }
+ * ]
+ * ```
  */
+export type DaysToShow = { date: string; events: NoteWithDate[] }[];
+export const getDaysToShow = (
+	notesByDay: NotesByDay,
+	referenceDate: Moment
+) => {
+	const HOW_MANY_DAYS = 60; // This represents the total number of days that will be in the array
+
+	const startDate = referenceDate.clone().subtract(HOW_MANY_DAYS / 2, "days"); // Half before referenceDate
+	const endDate = referenceDate.clone().add(HOW_MANY_DAYS / 2, "days"); // Half after referenceDate
+
+	const dateStrings: string[] = Array.from(
+		{ length: endDate.diff(startDate, "days") + 1 },
+		(_, index) => startDate.clone().add(index, "days").format("YYYY-MM-DD")
+	); // This is like ["2023-08-01", "2023-08-02", "2023-08-03", ...etc]
+
+	const daysToShow: DaysToShow = dateStrings.reduce((daysArray, date) => {
+		daysArray.push({
+			date,
+			events: notesByDay[date] || [], // If no notes for the date, use an empty array
+		});
+		return daysArray;
+	}, [] as DaysToShow);
+
+	return daysToShow;
+};
