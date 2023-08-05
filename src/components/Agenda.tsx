@@ -1,6 +1,12 @@
-import React, { Ref } from "react";
-import { NoteWithDate, NotesByDay, getNotesByDay } from "../parseNotes";
-import moment from "moment";
+import React, { Ref, useEffect, useState } from "react";
+import {
+	DaysToShow,
+	NoteWithDate,
+	NotesByDay,
+	getDaysToShow,
+	getNotesByDay,
+} from "../parseNotes";
+import moment, { Moment } from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
 
@@ -16,46 +22,43 @@ export const Agenda = ({
 		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
 	) => void;
 }) => {
+	const [loaded, setLoaded] = useState(false);
 	const notesByDay: NotesByDay = getNotesByDay(notesToShow);
-
-	// Get the earliest and latest dates
-	let startDate = moment.min(
-		Object.keys(notesByDay).map((date) => moment(date))
+	const [daysToShow, setDaysToShow] = useState<DaysToShow>(
+		getDaysToShow(notesByDay, moment())
 	);
-	let endDate = moment.max(
-		Object.keys(notesByDay).map((date) => moment(date))
-	);
+	const [referenceDate, setReferenceDate] = useState<Moment>(moment());
 
-	// ! This is because my date parser screws up with things that look like dates but aren't (like "0000" or "Porsche Boxster 986" or "Saab 900")
-	if (startDate.isBefore(moment("2010-01-01"))) {
-		console.log("🌴 We had to reassign startDate!");
-		startDate = moment("2010-01-01");
-	}
+	const showPrev = () => {
+		const newReferenceDate = moment(daysToShow[0].date);
 
-	if (endDate.isAfter(moment("2030-01-01"))) {
-		console.log("🌴 We had to reassign endDate!");
-		endDate = moment("2030-01-01");
-	}
+		setReferenceDate(newReferenceDate);
+		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+	};
 
-	// Generate an array of dates between the earliest and latest dates
-	const dateKeys = Array.from(
-		{ length: endDate.diff(startDate, "days") + 1 },
-		(_, index) => startDate.clone().add(index, "days").format("YYYY-MM-DD")
-	); // This ends up like ["2023-08-04", "2023-08-05", ... etc]
+	const showNext = () => {
+		const last = daysToShow.length - 1;
+		const newReferenceDate = moment(daysToShow[last].date);
 
-	type Days = { date: string; notes: NoteWithDate[] }[];
-	// Create days for making the `<Day>` list
-	const days: Days = dateKeys.reduce((daysArray, date) => {
-		daysArray.push({
-			date,
-			notes: notesByDay[date] || [], // If no notes for the date, use an empty array
-		});
-		return daysArray;
-	}, [] as Days);
+		setReferenceDate(newReferenceDate);
+		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+	};
+
+	// Initial load
+	useEffect(() => {
+		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
+		setLoaded(true);
+	}, [loaded]);
+
+	// Update data when notesToShow changes
+	useEffect(() => {
+		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
+	}, [notesToShow]);
 
 	return (
 		<div className="flex flex-col">
-			{days.map((day) => (
+			<button onClick={showPrev}>Previous</button>
+			{daysToShow.map((day) => (
 				<Day
 					key={day.date}
 					date={moment(day.date)}
@@ -66,8 +69,8 @@ export const Agenda = ({
 					}
 				>
 					{/* This is ugly but it's fine I guess; need to return null if no notes so the empty state will render */}
-					{day.notes.length > 0
-						? day.notes.map((note) => (
+					{day.events.length > 0
+						? day.events.map((note) => (
 								<Event
 									key={note.path}
 									note={note}
@@ -77,6 +80,7 @@ export const Agenda = ({
 						: null}
 				</Day>
 			))}
+			<button onClick={showNext}>Next</button>
 		</div>
 	);
 };
