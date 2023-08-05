@@ -93,3 +93,53 @@ export const getFlatFolders = (notesWithDates: NoteWithDate[]) => {
 
 	return flatFolders;
 };
+
+/**
+ * NotesByDay
+ *
+ * The keys are strings like `YYYY-MM-DD`, a Moment-formatted string representing a day
+ *
+ * The values are `NoteWithDate[]` and represent all the notes on that particular day
+ *
+ * ```json
+ * {
+ *   "2022-12-20": [{}],
+ *   "2023-02-25": [{}],
+ *   "2023-03-26": [{}],
+ *   "2023-05-23": [{}],
+ *   "2023-05-27": [{}],
+ *   "2023-05-30": [{}],
+ *   "2023-06-30": [{}],
+ *   "2023-07-02": [{}],
+ *   "2023-07-04": [{}],
+ *   "2023-07-13": [{}],
+ *   "2023-07-14": [{},{}],
+ *   "2023-07-31": [{}],
+ *   "2023-08-02": [{}],
+ *   "2023-08-04": [{}],
+ *   "2023-09-01": [{}],
+ * }
+ * ```
+ */
+export type NotesByDay = { [date: string]: NoteWithDate[] };
+export const getNotesByDay = (notesWithDates: NoteWithDate[]) => {
+	const notesByDay: NotesByDay = {};
+
+	notesWithDates.forEach((note) => {
+		const date = moment(note.date).format("YYYY-MM-DD");
+
+		if (!notesByDay[date]) {
+			notesByDay[date] = [];
+		}
+
+		notesByDay[date].push(note);
+	});
+
+	return notesByDay;
+};
+
+/**
+ * Add 30 days (in either direction)
+ * For each day, check if there is a matching key in notesByDay
+ * If yes, add the notesByDay[date] to this day's events
+ */

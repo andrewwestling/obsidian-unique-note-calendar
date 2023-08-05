@@ -1,5 +1,5 @@
 import React from "react";
-import { NoteWithDate } from "../parseNotes";
+import { NoteWithDate, NotesByDay, getNotesByDay } from "../parseNotes";
 import moment from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
@@ -14,26 +14,14 @@ export const Agenda = ({
 		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
 	) => void;
 }) => {
-	// Create an object to store notes by date
-	const notesByDate: { [date: string]: NoteWithDate[] } = {};
-
-	// Iterate through the array and organize notes by date
-	notesToShow.forEach((note) => {
-		const date = moment(note.date).format("YYYY-MM-DD");
-
-		if (!notesByDate[date]) {
-			notesByDate[date] = [];
-		}
-
-		notesByDate[date].push(note);
-	});
+	const notesByDay: NotesByDay = getNotesByDay(notesToShow);
 
 	// Get the earliest and latest dates
 	let startDate = moment.min(
-		Object.keys(notesByDate).map((date) => moment(date))
+		Object.keys(notesByDay).map((date) => moment(date))
 	);
 	let endDate = moment.max(
-		Object.keys(notesByDate).map((date) => moment(date))
+		Object.keys(notesByDay).map((date) => moment(date))
 	);
 
 	// ! This is because my date parser screws up with things that look like dates but aren't (like "0000" or "Porsche Boxster 986" or "Saab 900")
@@ -53,17 +41,15 @@ export const Agenda = ({
 		(_, index) => startDate.clone().add(index, "days").format("YYYY-MM-DD")
 	); // This ends up like ["2023-08-04", "2023-08-05", ... etc]
 
+	type Days = { date: string; notes: NoteWithDate[] }[];
 	// Create days for making the `<Day>` list
-	const days: { date: string; notes: NoteWithDate[] }[] = dateKeys.reduce(
-		(acc, date) => {
-			acc.push({
-				date,
-				notes: notesByDate[date] || [], // If no notes for the date, use an empty array
-			});
-			return acc;
-		},
-		[] as { date: string; notes: NoteWithDate[] }[]
-	);
+	const days: Days = dateKeys.reduce((daysArray, date) => {
+		daysArray.push({
+			date,
+			notes: notesByDay[date] || [], // If no notes for the date, use an empty array
+		});
+		return daysArray;
+	}, [] as Days);
 
 	return (
 		<div className="flex flex-col">
