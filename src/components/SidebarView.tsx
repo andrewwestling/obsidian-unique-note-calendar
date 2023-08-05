@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePluginContext } from "./PluginContext";
 import { NoteWithDate, getFlatFolders, getNotesWithDates } from "../parseNotes";
 import { SelectFolder } from "./SelectFolder";
@@ -90,6 +90,17 @@ export const SidebarView = ({ app }: { app: App }) => {
 		}
 	};
 
+	// For "Today" button
+	const todayRef = useRef<null | HTMLDivElement>(null);
+	const onTodayClick = () => {
+		if (todayRef.current) {
+			console.log("📆 Today: Scrolling to today...");
+			todayRef.current.scrollIntoView({ behavior: "auto" });
+		} else {
+			console.log("📆 Today: No date matches today in the list");
+		}
+	};
+
 	return (
 		<div className="flex flex-col gap-3 h-screen-minus-header">
 			{/* Top row: Reload button, SelectFolder */}
@@ -100,6 +111,14 @@ export const SidebarView = ({ app }: { app: App }) => {
 					onClick={getSidebarData}
 				>
 					🔄
+				</button>
+
+				{/* "Today" button */}
+				<button
+					className="flex-0 basis-8 border border-solid rounded-md"
+					onClick={onTodayClick}
+				>
+					Today
 				</button>
 
 				{/* SelectFolder dropdown */}
@@ -113,7 +132,11 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 			{/* Agenda: Days and Events */}
 			<div className="flex-1 overflow-auto">
-				<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
+				<Agenda
+					todayRef={todayRef}
+					notesToShow={notesToShow}
+					onNoteClick={onNoteClick}
+				/>
 			</div>
 		</div>
 	);

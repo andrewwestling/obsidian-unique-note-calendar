@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Ref } from "react";
 import { NoteWithDate, NotesByDay, getNotesByDay } from "../parseNotes";
 import moment from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
 
 export const Agenda = ({
+	todayRef = null,
 	notesToShow = [],
 	onNoteClick = () => {},
 }: {
+	todayRef?: Ref<HTMLDivElement>;
 	notesToShow: NoteWithDate[];
 	onNoteClick: (
 		note: NoteWithDate,
@@ -54,7 +56,15 @@ export const Agenda = ({
 	return (
 		<div className="flex flex-col">
 			{days.map((day) => (
-				<Day key={day.date} date={moment(day.date)}>
+				<Day
+					key={day.date}
+					date={moment(day.date)}
+					ref={
+						moment().format("YYYY-MM-DD") === day.date
+							? todayRef
+							: null
+					}
+				>
 					{/* This is ugly but it's fine I guess; need to return null if no notes so the empty state will render */}
 					{day.notes.length > 0
 						? day.notes.map((note) => (

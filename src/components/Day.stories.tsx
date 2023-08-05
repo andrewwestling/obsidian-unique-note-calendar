@@ -27,3 +27,14 @@ export const WithEvents = () => {
 		</Day>
 	);
 };
+
+export const IsToday = () => {
+	return (
+		<Day date={moment()}>
+			<Event
+				note={MOCK_NOTES_TO_SHOW[0]}
+				onNoteClick={(note) => alert(`Clicked ${note.name}`)}
+			></Event>
+		</Day>
+	);
+};
