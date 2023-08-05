@@ -1,4 +1,5 @@
-import { TFile, moment } from "obsidian";
+import { TFile } from "obsidian";
+import moment from "moment";
 import { PluginSettings } from "./settings";
 
 export type NoteWithDate = {
