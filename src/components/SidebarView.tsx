@@ -63,6 +63,8 @@ export const SidebarView = ({ app }: { app: App }) => {
 			console.log("🪩 in useEffect getData()", {
 				notesToShow,
 			});
+
+			onTodayClick();
 		};
 
 		getData();
