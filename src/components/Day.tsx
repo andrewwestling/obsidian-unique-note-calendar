@@ -18,7 +18,7 @@ export const Day = forwardRef(
 		return (
 			<div
 				ref={ref}
-				className="flex flex-row gap-2 border-b border-l-0 border-r-0 border-t-0 border-solid py-3"
+				className="flex flex-row gap-2 border-b border-l-0 border-r-0 border-t-0 border-solid border-hr-color py-3"
 			>
 				{/* Date */}
 				<div
@@ -51,7 +51,7 @@ export const Day = forwardRef(
 				</div>
 
 				{/* Events or empty state */}
-				<div className="flex flex-col gap-2 flex-1 mb-1">
+				<div className="flex flex-col gap-1 flex-1 mb-1">
 					{children || (
 						<span className="text-center text-xs">No events</span>
 					)}

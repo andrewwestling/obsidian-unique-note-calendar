@@ -25,6 +25,12 @@ module.exports = {
 			 * For using Obsidian's default "accent" color
 			 */
 			accent: "var(--text-accent)",
+			/**
+			 * `hr-color`
+			 *
+			 * For using Obsidian's default color for horizontal rules
+			 */
+			"hr-color": "var(--hr-color)",
 		},
 	},
 	plugins: [],
