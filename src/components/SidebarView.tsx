@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePluginContext } from "./PluginContext";
 import { NoteWithDate, getFlatFolders, getNotesWithDates } from "../parseNotes";
 import { SelectFolder } from "./SelectFolder";
@@ -90,8 +90,10 @@ export const SidebarView = ({ app }: { app: App }) => {
 		}
 	};
 
+	const containerRef = useRef(null);
+
 	return (
-		<div className="use-tailwind">
+		<div className="use-tailwind" ref={containerRef}>
 			{/* Top row (sticky): Reload button, SelectFolder */}
 			<div className="sticky top-0 flex flex-row gap-3">
 				{/* Reload button for debug/development */}
@@ -110,7 +112,11 @@ export const SidebarView = ({ app }: { app: App }) => {
 
 			{/* Agenda: Days and Events */}
 			<div className="my-3">
-				<Agenda notesToShow={notesToShow} onNoteClick={onNoteClick} />
+				<Agenda
+					containerRef={containerRef}
+					notesToShow={notesToShow}
+					onNoteClick={onNoteClick}
+				/>
 			</div>
 		</div>
 	);

@@ -76,6 +76,11 @@ export const MOCK_NOTES_TO_SHOW: NoteWithDate[] = [
 		path: "202307131241 Grocery list.md",
 		date: "2023-07-13T16:41:00.000Z",
 	},
+	{
+		name: "202308201241 Grocery list",
+		path: "202308201241 Grocery list.md",
+		date: "2023-08-20T16:41:00.000Z",
+	},
 ];
 
 export const MOCK_FOLDER_NAMES = [

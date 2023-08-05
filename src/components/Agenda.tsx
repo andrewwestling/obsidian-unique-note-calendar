@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Ref, useRef } from "react";
 import { NoteWithDate, NotesByDay, getNotesByDay } from "../parseNotes";
 import moment from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
 
 export const Agenda = ({
+	containerRef,
 	notesToShow = [],
 	onNoteClick = () => {},
 }: {
+	containerRef?: Ref<HTMLDivElement>;
 	notesToShow: NoteWithDate[];
 	onNoteClick: (
 		note: NoteWithDate,
@@ -51,10 +53,59 @@ export const Agenda = ({
 		return daysArray;
 	}, [] as Days);
 
+	// For scrolling
+	const todayRef = useRef(null);
+
+	const scrollToToday = () => {
+		console.log("📜 Scroll to today", {
+			containerRef,
+			todayRef,
+		});
+
+		if (containerRef.current && todayRef.current) {
+			const containerTop =
+				containerRef.current.parentNode.getBoundingClientRect().top;
+
+			const todayTop = todayRef.current.getBoundingClientRect().top;
+
+			const heightOfStickyTopBar = 100;
+
+			const scrollPosition =
+				todayTop - containerTop - heightOfStickyTopBar;
+
+			console.log("📜 Scrolling...", {
+				todayTop,
+				containerTop,
+				scrollPosition,
+			});
+
+			// We need `parentNode` here because the `.view-content` div above is handling the scrolling!
+			containerRef.current.parentNode.scrollTo({
+				top: scrollPosition,
+				behavior: "auto",
+			});
+		}
+	};
+
 	return (
 		<div className="flex flex-col">
+			<div className="sticky top-12">
+				{containerRef ? (
+					<button onClick={scrollToToday}>Scroll to today</button>
+				) : null}
+			</div>
+
+			{/* Scrolling container */}
 			{days.map((day) => (
-				<Day key={day.date} date={moment(day.date)}>
+				<Day
+					ref={
+						moment().format("YYYY-MM-DD") === day.date
+							? todayRef
+							: null
+					}
+					key={day.date}
+					date={moment(day.date)}
+				>
 					{/* This is ugly but it's fine I guess; need to return null if no notes so the empty state will render */}
 					{day.notes.length > 0
 						? day.notes.map((note) => (
