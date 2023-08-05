@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Agenda } from "./Agenda";
 import { MOCK_NOTES_TO_SHOW } from "../../.ladle/mockData";
 
@@ -8,22 +8,6 @@ export const WithNotes = () => {
 			notesToShow={MOCK_NOTES_TO_SHOW}
 			onNoteClick={(note) => alert(`Clicked ${note.name}`)}
 		/>
-	);
-};
-
-export const WithScrollToToday = () => {
-	const containerRef = useRef(null);
-
-	return (
-		<div className="h-[90vh] overflow-y-auto">
-			<div ref={containerRef}>
-				<Agenda
-					containerRef={containerRef}
-					notesToShow={MOCK_NOTES_TO_SHOW}
-					onNoteClick={(note) => alert(`Clicked ${note.name}`)}
-				/>
-			</div>
-		</div>
 	);
 };
 
