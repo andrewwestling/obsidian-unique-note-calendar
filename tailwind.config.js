@@ -16,6 +16,18 @@ module.exports = {
 				 * */
 				"screen-minus-header":
 					"calc(100vh - var(--header-height) - calc(var(--size-4-4) * 2))",
+
+				/**
+				 * `screen-mobile-custom`
+				 *
+				 * This is a hack for the screen height on the sidebar on my iPhone
+				 *
+				 * Notes:
+				 * - It seems like the header height at the top can be dynamic, based on how many lines the current note's title is
+				 * - Additionally, the sidebar can be opened in an "expanded" mode which disregards the header height (so this will be wrong)
+				 * - I'm just setting it to something sensible for now, it's not perfect but it's good enough to prevent double scrollbars
+				 * */
+				"screen-mobile-custom": "75vh",
 			},
 		},
 		colors: {

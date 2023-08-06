@@ -6,7 +6,7 @@ import { Agenda } from "./Agenda";
 import { App, TFile } from "obsidian";
 
 export const SidebarView = ({ app }: { app: App }) => {
-	const { plugin } = usePluginContext();
+	const { plugin, isMobileApp } = usePluginContext();
 
 	// State 😓
 	const [loaded, setLoaded] = useState(false);
@@ -114,7 +114,11 @@ export const SidebarView = ({ app }: { app: App }) => {
 	const scrollContainerRef = useRef<null | HTMLDivElement>(null);
 
 	return (
-		<div className="flex flex-col gap-3 h-screen-minus-header">
+		<div
+			className={`flex flex-col gap-3 ${
+				isMobileApp ? "h-screen-mobile-custom" : "h-screen-minus-header"
+			}`}
+		>
 			{/* Top row: Reload button, SelectFolder */}
 			<div className="flex flex-row gap-3 flex-0">
 				{/* Reload button for debug/development */}
