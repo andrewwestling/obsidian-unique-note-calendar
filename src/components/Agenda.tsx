@@ -1,4 +1,5 @@
-import React, { Ref, useEffect, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
+import "intersection-observer";
 import {
 	DaysToShow,
 	NoteWithDate,
@@ -11,12 +12,14 @@ import { Day } from "./Day";
 import { Event } from "./Event";
 
 export const Agenda = ({
-	todayRef = null,
+	todayRef,
+	scrollContainerRef,
 	todayClicked,
 	notesToShow = [],
 	onNoteClick = () => {},
 }: {
-	todayRef?: Ref<HTMLDivElement>;
+	todayRef?: RefObject<HTMLDivElement>;
+	scrollContainerRef?: RefObject<HTMLDivElement>;
 	todayClicked?: number;
 	notesToShow: NoteWithDate[];
 	onNoteClick: (
@@ -70,10 +73,93 @@ export const Agenda = ({
 		showToday();
 	}, [todayClicked]);
 
+	// For Infinite Scrolling
+	const prevRef = useRef(null);
+	const nextRef = useRef(null);
+
+	const handlePrevIntersection: IntersectionObserverCallback = (entries) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				const newReferenceDate = moment(daysToShow[0].date);
+
+				console.log("⏪ showPrev()", {
+					referenceDate: newReferenceDate.format("YYYY-MM-DD"),
+				});
+				showPrev();
+
+				// Scroll user to previous position
+				if (scrollContainerRef?.current) {
+					const previousDateElement =
+						scrollContainerRef?.current.children[0].children[1]; // This is arbitary, should use a ref but I'm tired
+					const previousDateTop =
+						previousDateElement.getBoundingClientRect().top;
+
+					const offset = 64; // This is arbitrary, I think this relates to the height of the header; I measured it by hand and tweaked til it felt right
+
+					const scrollAmount = previousDateTop - offset;
+
+					console.log("Scrolling down to previous date", {
+						previousDateElement,
+						scrollAmount,
+					});
+
+					scrollContainerRef.current.scrollTop += scrollAmount;
+				}
+			}
+		});
+	};
+	const handleNextIntersection: IntersectionObserverCallback = (entries) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				const last = daysToShow.length - 1;
+				const newReferenceDate = moment(daysToShow[last].date);
+
+				console.log("⏩ showNext()", {
+					referenceDate: newReferenceDate.format("YYYY-MM-DD"),
+				});
+				showNext();
+			}
+		});
+	};
+
+	useEffect(() => {
+		const options = {
+			root: null, // Use the viewport as the root
+			rootMargin: "0px",
+			threshold: 1.0, // When fully visible
+		};
+
+		const prevObserver = new IntersectionObserver(
+			handlePrevIntersection,
+			options
+		);
+		const nextObserver = new IntersectionObserver(
+			handleNextIntersection,
+			options
+		);
+
+		if (prevRef.current) {
+			prevObserver.observe(prevRef.current);
+		}
+
+		if (nextRef.current) {
+			nextObserver.observe(nextRef.current);
+		}
+
+		// Cleanup the observer when component unmounts
+		return () => {
+			if (prevRef.current) {
+				prevObserver.unobserve(prevRef.current);
+			}
+			if (nextRef.current) {
+				nextObserver.unobserve(nextRef.current);
+			}
+		};
+	}, [daysToShow]);
+
 	return (
 		<div className="flex flex-col">
-			<button onClick={showPrev}>Previous</button>
-			<button onClick={showToday}>Today</button>
+			<div ref={prevRef}></div>
 			{daysToShow.map((day) => (
 				<Day
 					key={day.date}
@@ -96,7 +182,7 @@ export const Agenda = ({
 						: null}
 				</Day>
 			))}
-			<button onClick={showNext}>Next</button>
+			<div ref={nextRef}></div>
 		</div>
 	);
 };

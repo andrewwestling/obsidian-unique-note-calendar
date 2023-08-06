@@ -110,6 +110,9 @@ export const SidebarView = ({ app }: { app: App }) => {
 		}
 	};
 
+	// For Infinite Scrolling
+	const scrollContainerRef = useRef<null | HTMLDivElement>(null);
+
 	return (
 		<div className="flex flex-col gap-3 h-screen-minus-header">
 			{/* Top row: Reload button, SelectFolder */}
@@ -140,9 +143,10 @@ export const SidebarView = ({ app }: { app: App }) => {
 			</div>
 
 			{/* Agenda: Days and Events */}
-			<div className="flex-1 overflow-auto">
+			<div ref={scrollContainerRef} className="flex-1 overflow-auto">
 				<Agenda
 					todayRef={todayRef}
+					scrollContainerRef={scrollContainerRef}
 					todayClicked={todayClicked}
 					notesToShow={notesToShow}
 					onNoteClick={onNoteClick}
