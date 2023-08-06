@@ -38,7 +38,7 @@ export const Day = forwardRef(
 						className="font-bold text-xl"
 						title={moment(date).format("YYYY-MM-DD")}
 					>
-						{moment(date).format("DD")}
+						{moment(date).format("MM/DD")}
 					</label>
 
 					{/* Day of week */}
