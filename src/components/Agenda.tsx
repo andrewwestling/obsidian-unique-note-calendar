@@ -10,6 +10,7 @@ import {
 import moment, { Moment } from "moment";
 import { Day } from "./Day";
 import { Event } from "./Event";
+import { usePluginContext } from "./PluginContext";
 
 export const Agenda = ({
 	todayRef,
@@ -27,6 +28,8 @@ export const Agenda = ({
 		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
 	) => void;
 }) => {
+	const { isMobileApp } = usePluginContext();
+
 	const [loaded, setLoaded] = useState(false);
 	const notesByDay: NotesByDay = getNotesByDay(notesToShow);
 	const [daysToShow, setDaysToShow] = useState<DaysToShow>(
@@ -34,11 +37,31 @@ export const Agenda = ({
 	);
 	const [referenceDate, setReferenceDate] = useState<Moment>(moment());
 
+	// Get previous days
 	const showPrev = () => {
 		const newReferenceDate = moment(daysToShow[0].date);
 
 		setReferenceDate(newReferenceDate);
 		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+
+		// Scroll user to previous position
+		if (scrollContainerRef?.current) {
+			const previousDateElement =
+				scrollContainerRef?.current.children[0].children[1]; // This is arbitary, should use a ref but I'm tired
+			const previousDateTop =
+				previousDateElement.getBoundingClientRect().top;
+
+			const offset = 64; // This is arbitrary, I think this relates to the height of the header; I measured it by hand and tweaked til it felt right
+
+			const scrollAmount = previousDateTop - offset;
+
+			console.log("Scrolling down to previous date", {
+				previousDateElement,
+				scrollAmount,
+			});
+
+			scrollContainerRef.current.scrollTop += scrollAmount;
+		}
 	};
 
 	const showNext = () => {
@@ -74,6 +97,7 @@ export const Agenda = ({
 	}, [todayClicked]);
 
 	// For Infinite Scrolling
+	const enableInfiniteScroll = !isMobileApp; // Disable infinite scroll on mobile app
 	const prevRef = useRef(null);
 	const nextRef = useRef(null);
 
@@ -86,25 +110,6 @@ export const Agenda = ({
 					referenceDate: newReferenceDate.format("YYYY-MM-DD"),
 				});
 				showPrev();
-
-				// Scroll user to previous position
-				if (scrollContainerRef?.current) {
-					const previousDateElement =
-						scrollContainerRef?.current.children[0].children[1]; // This is arbitary, should use a ref but I'm tired
-					const previousDateTop =
-						previousDateElement.getBoundingClientRect().top;
-
-					const offset = 64; // This is arbitrary, I think this relates to the height of the header; I measured it by hand and tweaked til it felt right
-
-					const scrollAmount = previousDateTop - offset;
-
-					console.log("Scrolling down to previous date", {
-						previousDateElement,
-						scrollAmount,
-					});
-
-					scrollContainerRef.current.scrollTop += scrollAmount;
-				}
 			}
 		});
 	};
@@ -159,7 +164,16 @@ export const Agenda = ({
 
 	return (
 		<div className="flex flex-col">
-			<div ref={prevRef}></div>
+			<div ref={enableInfiniteScroll ? prevRef : null}>
+				{enableInfiniteScroll ? null : (
+					<button
+						className="w-full border border-solid rounded-md"
+						onClick={showPrev}
+					>
+						Previous
+					</button>
+				)}
+			</div>
 			{daysToShow.map((day) => (
 				<Day
 					key={day.date}
@@ -182,7 +196,16 @@ export const Agenda = ({
 						: null}
 				</Day>
 			))}
-			<div ref={nextRef}></div>
+			<div ref={enableInfiniteScroll ? nextRef : null}>
+				{enableInfiniteScroll ? null : (
+					<button
+						className="w-full border border-solid rounded-md"
+						onClick={showNext}
+					>
+						Next
+					</button>
+				)}
+			</div>
 		</div>
 	);
 };
