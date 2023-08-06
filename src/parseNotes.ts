@@ -219,7 +219,7 @@ export const getDaysToShow = (
 	notesByDay: NotesByDay,
 	referenceDate: Moment
 ) => {
-	const HOW_MANY_DAYS = 60; // This represents the total number of days that will be in the array
+	const HOW_MANY_DAYS = 120; // This represents the total number of days that will be in the array
 
 	const startDate = referenceDate.clone().subtract(HOW_MANY_DAYS / 2, "days"); // Half before referenceDate
 	const endDate = referenceDate.clone().add(HOW_MANY_DAYS / 2, "days"); // Half after referenceDate
