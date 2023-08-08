@@ -1,7 +1,6 @@
 import moment from "moment";
 import React from "react";
-import { getEventTitle } from "../calendar";
-import { NoteWithDate } from "../parseNotes";
+import { NoteWithDate, getEventTitle } from "../parseNotes";
 import { usePluginContext } from "./PluginContext";
 
 export const Event = ({
