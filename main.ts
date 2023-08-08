@@ -5,9 +5,9 @@ import {
 	UniqueNoteCalendarPluginSettingTab,
 } from "src/settings";
 import {
-	RIGHT_SIDEBAR_LEAF_TYPE,
-	UniqueNoteCalendarPluginSidebarView,
-} from "src/sidebar";
+	AGENDA_SIDEBAR_VIEW_TYPE,
+	UniqueNoteCalendarPluginAgendaView,
+} from "src/agenda";
 
 export default class UniqueNoteCalendarPlugin extends Plugin {
 	settings: PluginSettings;
@@ -16,22 +16,22 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: "unique-note-calendar--open-in-right-sidebar",
-			name: "Open calendar in right sidebar",
+			id: "unique-note-calendar--open-agenda",
+			name: "Open Agenda",
 			callback: async () => {
 				const leafExists = this.app.workspace.getLeavesOfType(
-					RIGHT_SIDEBAR_LEAF_TYPE
+					AGENDA_SIDEBAR_VIEW_TYPE
 				).length;
 
 				if (!leafExists) {
 					await this.app.workspace.getRightLeaf(false).setViewState({
-						type: RIGHT_SIDEBAR_LEAF_TYPE,
+						type: AGENDA_SIDEBAR_VIEW_TYPE,
 					});
 				}
 
 				this.app.workspace.revealLeaf(
 					this.app.workspace.getLeavesOfType(
-						RIGHT_SIDEBAR_LEAF_TYPE
+						AGENDA_SIDEBAR_VIEW_TYPE
 					)[0]
 				);
 			},
@@ -42,13 +42,13 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		);
 
 		this.registerView(
-			RIGHT_SIDEBAR_LEAF_TYPE,
-			(leaf) => new UniqueNoteCalendarPluginSidebarView(leaf, this)
+			AGENDA_SIDEBAR_VIEW_TYPE,
+			(leaf) => new UniqueNoteCalendarPluginAgendaView(leaf, this)
 		);
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType(RIGHT_SIDEBAR_LEAF_TYPE);
+		this.app.workspace.detachLeavesOfType(AGENDA_SIDEBAR_VIEW_TYPE);
 	}
 
 	async loadSettings() {

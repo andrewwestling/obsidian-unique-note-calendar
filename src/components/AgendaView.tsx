@@ -5,7 +5,7 @@ import { SelectFolder } from "./SelectFolder";
 import { Agenda } from "./Agenda";
 import { App, TFile } from "obsidian";
 
-export const SidebarView = ({ app }: { app: App }) => {
+export const AgendaView = ({ app }: { app: App }) => {
 	const { plugin, isMobileApp } = usePluginContext();
 
 	// State 😓

@@ -2,13 +2,13 @@ import * as React from "react";
 import { Root, createRoot } from "react-dom/client";
 import { ItemView, WorkspaceLeaf, Platform } from "obsidian";
 import UniqueNoteCalendarPlugin from "../main";
-import { SidebarView } from "./components/SidebarView";
+import { AgendaView } from "./components/AgendaView";
 import { PluginContext } from "./components/PluginContext";
 import "../tailwind.css";
 
-export const RIGHT_SIDEBAR_LEAF_TYPE = "unique-note-calendar-right-sidebar";
+export const AGENDA_SIDEBAR_VIEW_TYPE = "unique-note-calendar-agenda-sidebar";
 
-export class UniqueNoteCalendarPluginSidebarView extends ItemView {
+export class UniqueNoteCalendarPluginAgendaView extends ItemView {
 	plugin: UniqueNoteCalendarPlugin;
 	reactRoot: Root;
 	isMobileApp: boolean;
@@ -24,11 +24,11 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 	}
 
 	getViewType(): string {
-		return RIGHT_SIDEBAR_LEAF_TYPE;
+		return AGENDA_SIDEBAR_VIEW_TYPE;
 	}
 
 	getDisplayText(): string {
-		return "Unique Note Calendar";
+		return "Unique Note Calendar: Agenda";
 	}
 
 	async onClose() {
@@ -48,7 +48,7 @@ export class UniqueNoteCalendarPluginSidebarView extends ItemView {
 						isMobileApp: this.isMobileApp,
 					}}
 				>
-					<SidebarView app={this.app} />
+					<AgendaView app={this.app} />
 				</PluginContext.Provider>
 			</React.StrictMode>
 		);
