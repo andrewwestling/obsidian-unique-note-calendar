@@ -8,6 +8,10 @@ import {
 	AGENDA_SIDEBAR_VIEW_TYPE,
 	UniqueNoteCalendarPluginAgendaView,
 } from "src/agenda";
+import {
+	CALENDAR_SIDEBAR_VIEW_TYPE,
+	UniqueNoteCalendarPluginCalendarView,
+} from "src/calendar";
 
 export default class UniqueNoteCalendarPlugin extends Plugin {
 	settings: PluginSettings;
@@ -37,6 +41,28 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "unique-note-calendar--open-calendar",
+			name: "Open Calendar",
+			callback: async () => {
+				const leafExists = this.app.workspace.getLeavesOfType(
+					CALENDAR_SIDEBAR_VIEW_TYPE
+				).length;
+
+				if (!leafExists) {
+					await this.app.workspace.getRightLeaf(false).setViewState({
+						type: CALENDAR_SIDEBAR_VIEW_TYPE,
+					});
+				}
+
+				this.app.workspace.revealLeaf(
+					this.app.workspace.getLeavesOfType(
+						CALENDAR_SIDEBAR_VIEW_TYPE
+					)[0]
+				);
+			},
+		});
+
 		this.addSettingTab(
 			new UniqueNoteCalendarPluginSettingTab(this.app, this)
 		);
@@ -44,6 +70,11 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		this.registerView(
 			AGENDA_SIDEBAR_VIEW_TYPE,
 			(leaf) => new UniqueNoteCalendarPluginAgendaView(leaf, this)
+		);
+
+		this.registerView(
+			CALENDAR_SIDEBAR_VIEW_TYPE,
+			(leaf) => new UniqueNoteCalendarPluginCalendarView(leaf, this)
 		);
 	}
 
