@@ -1,14 +1,17 @@
-import { Notice, Plugin } from "obsidian";
-import { getNotesWithDates, getFlatFolders } from "src/parseNotes";
+import { Plugin } from "obsidian";
 import {
 	DEFAULT_SETTINGS,
 	PluginSettings,
 	UniqueNoteCalendarPluginSettingTab,
 } from "src/settings";
 import {
-	RIGHT_SIDEBAR_LEAF_TYPE,
-	UniqueNoteCalendarPluginSidebarView,
-} from "src/sidebar";
+	AGENDA_SIDEBAR_VIEW_TYPE,
+	UniqueNoteCalendarPluginAgendaView,
+} from "src/agenda";
+import {
+	CALENDAR_SIDEBAR_VIEW_TYPE,
+	UniqueNoteCalendarPluginCalendarView,
+} from "src/calendar";
 
 export default class UniqueNoteCalendarPlugin extends Plugin {
 	settings: PluginSettings;
@@ -17,61 +20,44 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: "test-getNoteDates",
-			name: "Test: Get Note Dates",
-			callback: async () => {
-				const noteDates = await getNotesWithDates(
-					this.app.vault.getMarkdownFiles(),
-					this.settings.uniquePrefixFormat
-				);
-
-				console.log({ noteDates });
-
-				const howMany = noteDates.length;
-				const moreThanOne = howMany > 1;
-
-				new Notice(
-					`📝✅ Found ${howMany} ${
-						moreThanOne ? "notes with dates" : "note with a date"
-					}. Check the console to see the output.`
-				);
-			},
-		});
-
-		this.addCommand({
-			id: "test-getFlatFolders",
-			name: "Test: Make FlatFolders",
-			callback: async () => {
-				const flatFolders = await getNotesWithDates(
-					this.app.vault.getMarkdownFiles(),
-					this.settings.uniquePrefixFormat
-				).then(getFlatFolders);
-
-				console.log({ flatFolders });
-
-				new Notice(
-					"🗂️✅ Made flatFolders. Check the console to see the output."
-				);
-			},
-		});
-
-		this.addCommand({
-			id: "unique-note-calendar--open-in-right-sidebar",
-			name: "Open calendar in right sidebar",
+			id: "unique-note-calendar--open-agenda",
+			name: "Open Agenda",
 			callback: async () => {
 				const leafExists = this.app.workspace.getLeavesOfType(
-					RIGHT_SIDEBAR_LEAF_TYPE
+					AGENDA_SIDEBAR_VIEW_TYPE
 				).length;
 
 				if (!leafExists) {
 					await this.app.workspace.getRightLeaf(false).setViewState({
-						type: RIGHT_SIDEBAR_LEAF_TYPE,
+						type: AGENDA_SIDEBAR_VIEW_TYPE,
 					});
 				}
 
 				this.app.workspace.revealLeaf(
 					this.app.workspace.getLeavesOfType(
-						RIGHT_SIDEBAR_LEAF_TYPE
+						AGENDA_SIDEBAR_VIEW_TYPE
+					)[0]
+				);
+			},
+		});
+
+		this.addCommand({
+			id: "unique-note-calendar--open-calendar",
+			name: "Open Calendar",
+			callback: async () => {
+				const leafExists = this.app.workspace.getLeavesOfType(
+					CALENDAR_SIDEBAR_VIEW_TYPE
+				).length;
+
+				if (!leafExists) {
+					await this.app.workspace.getRightLeaf(false).setViewState({
+						type: CALENDAR_SIDEBAR_VIEW_TYPE,
+					});
+				}
+
+				this.app.workspace.revealLeaf(
+					this.app.workspace.getLeavesOfType(
+						CALENDAR_SIDEBAR_VIEW_TYPE
 					)[0]
 				);
 			},
@@ -82,13 +68,18 @@ export default class UniqueNoteCalendarPlugin extends Plugin {
 		);
 
 		this.registerView(
-			RIGHT_SIDEBAR_LEAF_TYPE,
-			(leaf) => new UniqueNoteCalendarPluginSidebarView(leaf, this)
+			AGENDA_SIDEBAR_VIEW_TYPE,
+			(leaf) => new UniqueNoteCalendarPluginAgendaView(leaf, this)
+		);
+
+		this.registerView(
+			CALENDAR_SIDEBAR_VIEW_TYPE,
+			(leaf) => new UniqueNoteCalendarPluginCalendarView(leaf, this)
 		);
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType(RIGHT_SIDEBAR_LEAF_TYPE);
+		this.app.workspace.detachLeavesOfType(AGENDA_SIDEBAR_VIEW_TYPE);
 	}
 
 	async loadSettings() {
