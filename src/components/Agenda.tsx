@@ -2,9 +2,12 @@ import React, { RefObject, useEffect, useRef, useState } from "react";
 import "intersection-observer";
 import {
 	DaysToShow,
+	HeadingsByDay,
 	NoteWithDate,
 	NotesByDay,
+	combineNotesAndHeadings,
 	getDaysToShow,
+	getHeadingsByDay,
 	getNotesByDay,
 } from "../parseNotes";
 import moment, { Moment } from "moment";
@@ -32,6 +35,11 @@ export const Agenda = ({
 
 	const [loaded, setLoaded] = useState(false);
 	const notesByDay: NotesByDay = getNotesByDay(notesToShow);
+	const headingsByDay: HeadingsByDay = getHeadingsByDay(notesToShow);
+	const combinedNotesAndHeadingsByDay = combineNotesAndHeadings(
+		notesByDay,
+		headingsByDay
+	);
 	const [daysToShow, setDaysToShow] = useState<DaysToShow>(
 		getDaysToShow(notesByDay, moment())
 	);
@@ -69,25 +77,33 @@ export const Agenda = ({
 		const newReferenceDate = moment(daysToShow[last].date);
 
 		setReferenceDate(newReferenceDate);
-		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+		setDaysToShow(
+			getDaysToShow(combinedNotesAndHeadingsByDay, newReferenceDate)
+		);
 	};
 
 	const showToday = () => {
 		const newReferenceDate = moment();
 
 		setReferenceDate(newReferenceDate);
-		setDaysToShow(getDaysToShow(notesByDay, newReferenceDate));
+		setDaysToShow(
+			getDaysToShow(combinedNotesAndHeadingsByDay, newReferenceDate)
+		);
 	};
 
 	// Initial load
 	useEffect(() => {
-		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
+		setDaysToShow(
+			getDaysToShow(combinedNotesAndHeadingsByDay, referenceDate)
+		);
 		setLoaded(true);
 	}, [loaded]);
 
 	// Update data when notesToShow changes
 	useEffect(() => {
-		setDaysToShow(getDaysToShow(notesByDay, referenceDate));
+		setDaysToShow(
+			getDaysToShow(combinedNotesAndHeadingsByDay, referenceDate)
+		);
 	}, [notesToShow]);
 
 	// Update data if user clicks "Today" outside
@@ -188,7 +204,7 @@ export const Agenda = ({
 					{day.events.length > 0
 						? day.events.map((note) => (
 								<Event
-									key={note.path}
+									key={Math.random()}
 									note={note}
 									onNoteClick={onNoteClick}
 								></Event>

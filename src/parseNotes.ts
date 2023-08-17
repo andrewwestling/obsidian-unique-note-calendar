@@ -1,26 +1,68 @@
-import { TFile } from "obsidian";
+import { MetadataCache, TFile } from "obsidian";
 import moment, { Moment } from "moment";
 import { PluginSettings } from "./settings";
+
+type ISO8601 = string; // ISO 8601 dates are represented as a string, resulting from moment.Moment()
+
+export type HeadingWithDate = {
+	name: string;
+	parent: NoteWithDate;
+	type: "heading";
+	date: ISO8601;
+};
 
 export type NoteWithDate = {
 	name: TFile["basename"];
 	path: TFile["path"];
-	date: string; // Truthfully this is an ISO 8601 date string, resulting from moment.Moment()
+	type: "note";
+	date: ISO8601;
+	headings?: HeadingWithDate[];
 };
 
 export const getNotesWithDates: (
 	files: TFile[],
-	uniquePrefixFormat: PluginSettings["uniquePrefixFormat"]
-) => Promise<NoteWithDate[]> = async (files, uniquePrefixFormat) => {
+	uniquePrefixFormat: PluginSettings["uniquePrefixFormat"],
+	metadataCache?: MetadataCache
+) => Promise<NoteWithDate[]> = async (
+	files,
+	uniquePrefixFormat,
+	metadataCache
+) => {
 	const notesWithDates: NoteWithDate[] = [];
 
 	files.forEach((file) => {
 		const date = moment(file.name, uniquePrefixFormat);
 		if (date.isValid()) {
+			// Get headings
+			const fileHeadings =
+				metadataCache?.getFileCache(file)?.headings || [];
+			const headingsWithDates: HeadingWithDate[] = [];
+			fileHeadings.forEach((heading) => {
+				const headingDate = moment(
+					heading.heading, // 🤢
+					uniquePrefixFormat
+				);
+				if (headingDate.isValid()) {
+					headingsWithDates.push({
+						name: heading.heading, // 🤮
+						parent: {
+							name: file.basename,
+							path: file.path,
+							type: "note",
+							date: moment(date).toISOString(),
+						},
+						type: "heading",
+						date: moment(headingDate).toISOString(),
+					});
+				}
+			});
+
 			notesWithDates.push({
 				name: file.basename,
 				path: file.path,
+				type: "note",
 				date: moment(date).toISOString(),
+				headings: headingsWithDates,
 			});
 		}
 	});
@@ -37,7 +79,7 @@ export const getNotesWithDates: (
  * - Return the part of the filename after the date
  */
 export const getEventTitle = (
-	note: NoteWithDate,
+	note: NoteWithDate | HeadingWithDate,
 	uniquePrefixFormat: PluginSettings["uniquePrefixFormat"]
 ) => {
 	const formattedDate = moment(note.date).format(uniquePrefixFormat);
@@ -165,11 +207,61 @@ export const getNotesByDay = (notesWithDates: NoteWithDate[]) => {
 };
 
 /**
+ * Same thing as NotesByDay, but for headings within a note
+ */
+export type HeadingsByDay = { [date: string]: HeadingWithDate[] };
+export const getHeadingsByDay = (notesWithDates: NoteWithDate[]) => {
+	const headingsByDay: HeadingsByDay = {};
+
+	notesWithDates.forEach((note) => {
+		note.headings?.forEach((heading) => {
+			const date = moment(heading.date).format("YYYY-MM-DD");
+
+			if (!headingsByDay[date]) {
+				headingsByDay[date] = [];
+			}
+
+			headingsByDay[date].push(heading);
+		});
+	});
+
+	return headingsByDay;
+};
+
+export type CombinedNotesAndHeadingsByDay = {
+	[date: string]: (NoteWithDate | HeadingWithDate)[];
+};
+export const combineNotesAndHeadings = (
+	notesByDay: NotesByDay,
+	headingsByDay: HeadingsByDay
+) => {
+	const combined: CombinedNotesAndHeadingsByDay = {};
+
+	// Add notes to the combined object
+	for (const date in notesByDay) {
+		if (!combined[date]) {
+			combined[date] = notesByDay[date];
+		}
+	}
+
+	// Add headings to the combined object, merging if date already exists
+	for (const date in headingsByDay) {
+		if (!combined[date]) {
+			combined[date] = headingsByDay[date];
+		} else {
+			combined[date] = combined[date].concat(headingsByDay[date]);
+		}
+	}
+
+	return combined;
+};
+
+/**
  * DaysToShow
  *
  * This is an array of objects representing a "day" on the Agenda
  *
- * The `getDaysToShow(notesByDay, referenceDate)` function generates this, where you pass in a `referenceDate` and it generates a `daysToShow` array for 30 days before and after that date
+ * The `getDaysToShow(combinedNotesAndHeadingsByDay, referenceDate)` function generates this, where you pass in a `referenceDate` and it generates a `daysToShow` array for 30 days before and after that date
  *
  * DaysToShow looks like this:
  *
@@ -239,9 +331,12 @@ export const getNotesByDay = (notesWithDates: NoteWithDate[]) => {
  * ]
  * ```
  */
-export type DaysToShow = { date: string; events: NoteWithDate[] }[];
+export type DaysToShow = {
+	date: string;
+	events: (NoteWithDate | HeadingWithDate)[];
+}[];
 export const getDaysToShow = (
-	notesByDay: NotesByDay,
+	combinedNotesAndHeadingsByDay: CombinedNotesAndHeadingsByDay,
 	referenceDate: Moment
 ) => {
 	const HOW_MANY_DAYS = 120; // This represents the total number of days that will be in the array
@@ -255,9 +350,19 @@ export const getDaysToShow = (
 	); // This is like ["2023-08-01", "2023-08-02", "2023-08-03", ...etc]
 
 	const daysToShow: DaysToShow = dateStrings.reduce((daysArray, date) => {
+		const sortedEvents = combinedNotesAndHeadingsByDay[date]?.sort(
+			(a, b) => {
+				if (moment(a.date).isBefore(b.date)) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		);
+
 		daysArray.push({
 			date,
-			events: notesByDay[date] || [], // If no notes for the date, use an empty array
+			events: sortedEvents || [], // If no notes for the date, use an empty array
 		});
 		return daysArray;
 	}, [] as DaysToShow);

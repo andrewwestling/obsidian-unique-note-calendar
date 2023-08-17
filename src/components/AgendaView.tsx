@@ -19,10 +19,12 @@ export const AgendaView = ({ app }: { app: App }) => {
 	// Handler for getting sidebar data
 	const getSidebarData = async () => {
 		console.log("🔄 getSidebarData()");
+
 		// Get notesWithDates
 		const newNotesWithDates = await getNotesWithDates(
 			app.vault.getMarkdownFiles(),
-			plugin.settings.uniquePrefixFormat
+			plugin.settings.uniquePrefixFormat,
+			app.metadataCache
 		);
 
 		// Build flatFolders object
