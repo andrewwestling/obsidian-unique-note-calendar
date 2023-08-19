@@ -125,7 +125,7 @@ export const AgendaView = ({ app }: { app: App }) => {
 			<div className="flex flex-row gap-3 flex-0">
 				{/* Reload button for debug/development */}
 				<button
-					className="flex-0 basis-8 border border-solid rounded-md"
+					className="flex-0 basis-8 rounded-md"
 					onClick={getSidebarData}
 				>
 					🔄
@@ -133,7 +133,7 @@ export const AgendaView = ({ app }: { app: App }) => {
 
 				{/* "Today" button */}
 				<button
-					className="flex-0 basis-8 border border-solid rounded-md"
+					className="flex-0 basis-8 rounded-md"
 					onClick={goToToday}
 				>
 					Today

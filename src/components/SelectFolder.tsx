@@ -9,7 +9,7 @@ export const SelectFolder = ({
 }) => {
 	return (
 		<select
-			className="w-full border border-solid rounded-md"
+			className="w-full rounded-md"
 			onChange={(event: ChangeEvent) =>
 				onSelectFolderChange((event.target as HTMLSelectElement).value)
 			}
