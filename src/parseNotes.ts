@@ -369,3 +369,21 @@ export const getDaysToShow = (
 
 	return daysToShow;
 };
+
+/**
+ * "Events" concept
+ *
+ * Events supports multiple situations:
+ *
+ * An Event can be
+ * - `NoteWithDate` (notes with dates in filename, found in vault)
+ * - `HeadingWithDate` (found in a note)
+ * - (ICS Calendar event) (via Calendar Subscriptions feature; coming later)
+ *
+ * "Cache" concept
+ *
+ * - Notes (all notes in the vault that we care about: notes with dates, notes with date headings)
+ * - Folders
+ * - Settings (excluded folders, date formats)
+ * - "Last-modified/last-checked" (so we only process recent changes, instead of the whole vault every time)
+ */
